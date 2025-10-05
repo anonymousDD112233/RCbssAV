@@ -62,7 +62,12 @@ typeOfVerify = sys.argv[4]
 configStr = f"{typeOfVerify}_{mapName}_execution_delay_prob_{delay_prob_Exec}_num_of_agents_{num_of_agents}"
 
 num_of_Goals = 50
-desired_safe_probs_for_test = ["NotAvailable", 0, 0.05, 0.25, 0.5, 0.8, 0.95, 0.99]      # NA for planning delay prob = 0
+if typeOfVerify == "Baselines":
+    desired_safe_probs_for_test = ["NotAvailable", 0]      # NA for planning CBSS
+    typeOfVerify = "Strict"
+else:
+    desired_safe_probs_for_test = [0.05, 0.25, 0.5, 0.8, 0.95, 0.99, 0.999, 0.9999]
+
 instances = 300
 verifyAlpha = 0.05
 max_planning_time = 60
@@ -74,7 +79,8 @@ if not os.path.exists("Output_files"):
 columns = ["Map", "Desired Safe prob", "Delay prob (Planning)", "Delay prob (Execution)", "Number of agents",
            "Number of goals", "Instance",
            "Runtime", "Offline Runtime", "Online Runtime", "Number Of Replans", "Online Total Service Time",
-           "Sum of Planning Times for All Goals", "SGAT", "Offline Total Service Time", "Min Safe Prob across Plans"]
+           "Sum of Planning Times for All Goals", "SGAT", "Offline Total Service Time", "Min Safe Prob across Plans",
+           "Number of Expands"]
 
 with open(f"Output_files/Output_{configStr}.csv", mode="w", newline="",
           encoding="utf-8") as file:
@@ -104,11 +110,11 @@ def run_Test(desired_safe_prob, AgentLocations, GoalLocations, DelaysProbDictPla
     start_time = time.time()
 
     # Offline stage
-    p, OfflineTime = run_robust_planner_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
+    p, OfflineTime, countExpand = run_robust_planner_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
                                                      DelaysProbDictPlanning, mapAndDim, verifyAlpha, gurobiModel,
                                                      max_planning_time, typeOfVerify)
     if p is None:
-        return None, None, None, None, None, None, None
+        return None, None, None, None, None, None, None, countExpand
 
     minSafeProb = min(minSafeProb, round(p[2], 3)) if desired_safe_prob != "NotAvailable" else "NotAvailable"
     Offline_TST = p[1]
@@ -118,7 +124,7 @@ def run_Test(desired_safe_prob, AgentLocations, GoalLocations, DelaysProbDictPla
 
     while True:
         if time.time() - start_time >= 600:
-            return round(OfflineTime, 3), None, numOfReplans, None, Offline_TST, None, None
+            return round(OfflineTime, 3), None, numOfReplans, None, Offline_TST, None, None, round(countExpand/(numOfReplans + 1), 3)
 
         s = Run_Simulation(p[0], DelaysProbDictExecution, AgentLocations, GoalLocations, randGen, timestep, Online_TST)
         if s.runSimulation():
@@ -131,13 +137,15 @@ def run_Test(desired_safe_prob, AgentLocations, GoalLocations, DelaysProbDictPla
             reset_gurobi_model(gurobiModel)
 
         # Online re-planning
-        p, replan_time = run_robust_planner_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
+        p, replan_time, currCountExpand = run_robust_planner_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
                                                          DelaysProbDictPlanning, mapAndDim, verifyAlpha, gurobiModel,
                                                          max_planning_time, typeOfVerify)
-        if p is None:
-            return round(OfflineTime, 3), None, numOfReplans + 1, None, Offline_TST, None, None
 
-        minSafeProb = min(minSafeProb, round(p[2], 3)) if desired_safe_prob != "NotAvailable" else "NotAvailable"
+        countExpand += currCountExpand
+        if p is None:
+            return round(OfflineTime, 3), None, numOfReplans + 1, None, Offline_TST, None, None, round(countExpand/(numOfReplans + 2), 3)
+
+        minSafeProb = min(minSafeProb, round(p[2], 4)) if desired_safe_prob != "NotAvailable" else "NotAvailable"
         OnlineTime += replan_time
         planning_time_sum_over_goals += replan_time * len(GoalLocations)
         numOfReplans += 1
@@ -145,7 +153,7 @@ def run_Test(desired_safe_prob, AgentLocations, GoalLocations, DelaysProbDictPla
         Online_TST = s.TST
 
     return round(OfflineTime, 3), round(OnlineTime, 3), numOfReplans, Online_TST, Offline_TST, round(
-        planning_time_sum_over_goals, 3), minSafeProb
+        planning_time_sum_over_goals, 3), minSafeProb, round(countExpand/(numOfReplans + 1), 3)
 
 
 ####################################################### run Tests #################################################################################
@@ -168,7 +176,7 @@ def run_instances():
 
             result = run_Test(curr_desired_safe_prob, AgentsLocations, GoalsLocations, delaysProbDictForPlanning,
                               delaysProbDictForExecution)
-            offlineRuntime, onlineRuntime, numOfReplans, tstOnline, tstOffline, Planning_time_sum_over_goals, MinSafeProb = result
+            offlineRuntime, onlineRuntime, numOfReplans, tstOnline, tstOffline, Planning_time_sum_over_goals, MinSafeProb, CountExpand = result
 
             if onlineRuntime is None:
                 print("Plan is None!\n--------------------------------------------------------------------------\n")
@@ -177,7 +185,8 @@ def run_instances():
                     instance,
                     None, offlineRuntime, onlineRuntime, numOfReplans, tstOnline, Planning_time_sum_over_goals, None,
                     tstOffline,
-                    MinSafeProb
+                    MinSafeProb,
+                    CountExpand
                 ])
                 continue
 
@@ -190,7 +199,8 @@ def run_instances():
                 instance,
                 runtime, offlineRuntime, onlineRuntime, numOfReplans, tstOnline, Planning_time_sum_over_goals, SGAT,
                 tstOffline,
-                MinSafeProb
+                MinSafeProb,
+                CountExpand
             ])
 
         print(f"All safe_prob runs succeeded for instance {instance}, writing to CSV...\n")

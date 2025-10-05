@@ -2,7 +2,9 @@ import math
 import time
 from collections import defaultdict
 from queue import PriorityQueue
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Value
+import ctypes
+
 
 from FindConflict import FindConflict
 from LowLevelPlan import LowLevelPlan
@@ -12,7 +14,7 @@ from kBestSequencingByService import kBestSequencingByService
 
 
 class RobustPlanner:
-    def __init__(self, AgentLocations, GoalLocations, desired_safe_prob, delaysProb, MapAndDims, verifyAlpha, gurobiModel, process_queue, typeOfVerify):
+    def __init__(self, AgentLocations, GoalLocations, desired_safe_prob, delaysProb, MapAndDims, verifyAlpha, gurobiModel, process_queue, typeOfVerify, countExpand):
         self.AgentLocations = AgentLocations
         self.desired_safe_prob = desired_safe_prob
         self.OPEN = PriorityQueue()
@@ -21,6 +23,7 @@ class RobustPlanner:
         self.final_sol = None
         self.process_queue = process_queue
         self.delaysProb = delaysProb
+        self.countExpand = countExpand
 
         self.K_Best_Seq_Solver = kBestSequencingByService(self.AgentLocations, GoalLocations, MapAndDims, gurobiModel)
         self.LowLevelPlanner = LowLevelPlan(MapAndDims, self.AgentLocations, self.K_Best_Seq_Solver.cost_dict)
@@ -59,6 +62,8 @@ class RobustPlanner:
             N = self.CheckNewRoot(N)
             if N is None:
                 continue
+
+            self.countExpand.value += 1
 
             # If the paths in the current node are verified as valid, avoiding collisions with probability P, return them as the solution
             if not N.isPositiveNode and self.verify_algorithm.verify(N):
@@ -143,16 +148,17 @@ class RobustPlanner:
 
         return A
 
-def planner_process(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim, verifyAlpha, gurobiModel, queue, typeOfVerify):
-    cbss = RobustPlanner(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim, verifyAlpha, gurobiModel, queue, typeOfVerify)
+def planner_process(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim, verifyAlpha, gurobiModel, queue, typeOfVerify, countExpand):
+    cbss = RobustPlanner(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim, verifyAlpha, gurobiModel, queue, typeOfVerify, countExpand)
     cbss.run()
 
 def run_robust_planner_with_timeout(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim,
                                     verifyAlpha, gurobiModel, max_planning_time, typeOfVerify):
     queue = Queue()
+    countExpand = Value(ctypes.c_long, 0)
     process = Process(
         target=planner_process,
-        args=(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim, verifyAlpha, gurobiModel, queue, typeOfVerify)
+        args=(AgentLocations, GoalLocations, safe_prob, DelaysProbDict, mapAndDim, verifyAlpha, gurobiModel, queue, typeOfVerify, countExpand)
     )
     start_time = time.time()
     process.start()
@@ -167,4 +173,5 @@ def run_robust_planner_with_timeout(AgentLocations, GoalLocations, safe_prob, De
     last_result = None
     while not queue.empty():
         last_result = queue.get_nowait()
-    return last_result, min(60, plan_time)
+    expansions = countExpand.value
+    return last_result, min(60, plan_time), expansions
