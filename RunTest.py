@@ -6,7 +6,7 @@ import ast
 import sys
 import time
 
-from Robust_Planner import run_robust_planner_with_timeout
+from Planner_Configuration import run_planner_configuration_with_timeout
 from Run_Simulation import Run_Simulation
 import gurobipy as gp
 
@@ -110,7 +110,7 @@ def run_Test(desired_safe_prob, AgentLocations, GoalLocations, DelaysProbDictPla
     start_time = time.time()
 
     # Offline stage
-    p, OfflineTime, countExpand = run_robust_planner_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
+    p, OfflineTime, countExpand = run_planner_configuration_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
                                                      DelaysProbDictPlanning, mapAndDim, verifyAlpha, gurobiModel,
                                                      max_planning_time, typeOfVerify)
     if p is None:
@@ -137,7 +137,7 @@ def run_Test(desired_safe_prob, AgentLocations, GoalLocations, DelaysProbDictPla
             reset_gurobi_model(gurobiModel)
 
         # Online re-planning
-        p, replan_time, currCountExpand = run_robust_planner_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
+        p, replan_time, currCountExpand = run_planner_configuration_with_timeout(AgentLocations, GoalLocations, desired_safe_prob,
                                                          DelaysProbDictPlanning, mapAndDim, verifyAlpha, gurobiModel,
                                                          max_planning_time, typeOfVerify)
 
