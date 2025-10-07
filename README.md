@@ -24,9 +24,9 @@ This repository includes full source code, benchmark data and an experiment scri
 - **FindConflict.py** – Detects conflicts between agents’ paths.  
 - **LowLevelPlan.py** – Computes individual agent paths under constraints.
 - **NodeStateConstClasses.py** – Defines data structures for nodes, states, and constraints.
-- Robust_Planner.py
-- RunTest.py - Framework for running the experiments reported in the paper
-- Run_Simulation.py - Runs the online execution
+- **Planner_Configuration.py** - Executes the desired planner configuration, handling the setup logic to launch a complete planning run.
+- **RunTest.py** - Framework for running the experiments reported in the paper
+- **Run_Simulation.py** - Runs the online execution
 - **Verify.py** – Verifies solution robustness using simulations.
 - **createMap.py** – Generates agent and goal location for maps.
 - **kBestSequencingByService.py** - Finds the $K$-best service-time allocations using MILP.
