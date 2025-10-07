@@ -8,7 +8,7 @@ It implements the **Robust CBSS framework under the Sum of Service Time (SST) ob
 - **$RCbss_{T}AV$** – Anytime Verification variant that balances robustness and planning efficiency  
 
 The framework extends the **Conflict-Based Steiner Search (CBSS)** to support:
-- **SST-based allocation** via a MILP formulation (CBSS$_{SST}$)  
+- **SST-based allocation** via a MILP formulation ($CBSS_{SST}$)  
 - **K-best allocations** to replace the sequencing step in CBSS  
 - **Robust planning** against stochastic execution delays
 
