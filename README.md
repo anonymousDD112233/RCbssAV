@@ -25,11 +25,11 @@ This repository includes full source code, benchmark data and an experiment scri
 - **LowLevelPlan.py** – Computes individual agent paths under constraints.
 - **NodeStateConstClasses.py** – Defines data structures for nodes, states, and constraints.
 - Robust_Planner.py
-- RunTest.py
-- Run_Simulation.py
+- RunTest.py - Framework for running the experiments reported in the paper
+- Run_Simulation.py - Runs the online execution
 - **Verify.py** – Verifies solution robustness using simulations.
 - **createMap.py** – Generates agent and goal location for maps.
-- kBestSequencingByService.py
+- **kBestSequencingByService.py** - Finds the $K$-best service-time allocations using MILP.
 
 ---
 
@@ -39,7 +39,21 @@ This repository includes full source code, benchmark data and an experiment scri
 - **Python** ≥ 3.10  
 - Recommended: **Ubuntu 20.04+** (tested on Ubuntu 24.04, AMD EPYC 7702P, 16 cores)  
 
+---
+
 ### External Solvers
+
+This project relies on the **Gurobi Optimizer** for solving the MILP formulations used in allocation and sequencing.  
+We employ the official Python interface: `import gurobipy`
+
+#### Installation  
+- Download and install Gurobi from the official website: https://www.gurobi.com/  
+- Install the Python bindings (usually included with the installer) or via pip install gurobipy once Gurobi is installed.  
+- Ensure that the Gurobi license is activated. Academic users can obtain a free academic license directly from Gurobi.  
+
+#### Notes  
+- The experiments in the paper were run with Gurobi v11.0.3.  
+- Gurobi must be accessible in your PYTHONPATH and properly licensed for the solver to function.  
 
 
 ## Randomization & Seeds
