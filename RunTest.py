@@ -78,8 +78,8 @@ if not os.path.exists("Output_files"):
 
 columns = ["Map", "Desired Safe prob", "Delay prob (Planning)", "Delay prob (Execution)", "Number of agents",
            "Number of goals", "Instance",
-           "Runtime", "Offline Runtime", "Online Runtime", "Number Of Replans", "Online Total Service Time",
-           "Sum of Planning Times for All Goals", "SGAT", "Offline Total Service Time", "Min Safe Prob across Plans",
+           "Runtime", "Offline Runtime", "Online Runtime", "Number Of Replans", "Online SST",
+           "Sum of Planning Times for All Goals", "SGAT", "Offline SST", "Min Safe Prob across Plans",
            "Number of Expands"]
 
 with open(f"Output_files/Output_{configStr}.csv", mode="w", newline="",
