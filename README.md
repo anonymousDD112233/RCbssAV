@@ -20,7 +20,7 @@ This repository includes full source code, benchmark data and an experiment scri
 
 - **Agent_Goal_locations_files/** – Agent and goal locations files for experiments.  
 - **ExperimentalResults/** – Processed experimental results from all experiments.  
-- **OurResearch.domain/** – Benchmark maps used in experiments.
+- **Maps/** – Benchmark maps used in experiments.
 - **FindConflict.py** – Detects conflicts between agents’ paths.  
 - **LowLevelPlan.py** – Computes individual agent paths under constraints.
 - **NodeStateConstClasses.py** – Defines data structures for nodes, states, and constraints.
