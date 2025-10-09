@@ -10,7 +10,7 @@ It implements the **Robust CBSS framework under the Sum of Service Time (SST) ob
 The framework extends the **Conflict-Based Steiner Search (CBSS)** to support:
 - **Optimization under the SST objective ($CBSS_{SST}$)** (instead of SOC) via a MILP-based allocation  
 - **Elimination of fixed goal destination requirements** for agents  
-- **Robust planning** against stochastic execution delays
+- **Robust planning** against stochastic execution delays (Strict & Anytime)
 
 This repository includes full source code, benchmark data and an experiment scripts to enable **full reproducibility** of the results presented in the paper.
 
