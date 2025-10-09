@@ -36,7 +36,7 @@ gurobiModel.setParam("ImproveStartTime", 0.0)
 
 ####################################################### Create Map #################################################################################
 def create_map(map_name):
-    file_path = f"OurResearch.domain/{map_name}.map"
+    file_path = f"Maps/{map_name}.map"
     with open(file_path, "r") as file:
         lines = file.readlines()
     map_start_index = lines.index("map\n") + 1
