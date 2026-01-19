@@ -65,4 +65,7 @@ All randomized components are initialized with fixed seeds for reproducibility:
 - **FindConflict.py**: `seed = 42`
 - **Run_Simulation.py**: `seed = 44`
 
+In addition, the **Gurobi MILP solver** is configured with a fixed random seed:
+- **Gurobi Optimizer**: `Seed = 42`
+
 Other components are fully deterministic given identical inputs.
