@@ -1,6 +1,6 @@
 # Balancing Robustness and Efficiency in Multi-Agent Combinatorial Path Finding with Sum of Service Time
 
-This repository contains the official code accompanying our **IJCAI 2026** submission:  
+This repository contains the official code accompanying our **AAAI 2027** submission:  
 > **Balancing Robustness and Efficiency in Multi-Agent Combinatorial Path Finding with Sum of Service Time**
 
 It implements the **Robust CBSS framework under the Sum of Service Time (SST) objective**, including both algorithms presented in the paper:
@@ -8,8 +8,7 @@ It implements the **Robust CBSS framework under the Sum of Service Time (SST) ob
 - **$RCbssTA$** – Anytime Verification variant that balances robustness and planning efficiency  
 
 The framework extends **Conflict-Based Steiner Search (CBSS)** to support:
-- **Optimization under the SST objective ($CBSS_{SST}$)** (instead of SOC) via a MILP-based allocation  
-- **Elimination of fixed goal destination requirements** for agents  
+- **Optimization under the SST objective ($CBSS_{SST}$)** instead of SOC, using a MILP-based allocation that does not require fixed goal destinations for agents.
 - **Robust planning** against stochastic execution delays (Strict & Anytime)
 
 This repository includes full source code, benchmark data, and experiment scripts to enable **full reproducibility** of the results presented in the paper.
@@ -32,8 +31,8 @@ This repository includes full source code, benchmark data, and experiment script
 - **TypeOfOptimizeTest.py** – Experiments/tests for different optimization modes.  
 - **createMap.py** – Generates agent and goal locations for maps.
 - **kBestSequencingByService.py** – Finds the $K$-best **service-time (SST)** allocations using MILP.  
-- **kBestSequencingByMakespan.py** – Finds the $K$-best allocations using a makespan-oriented objective.  
-- **kBestSequencingBySoc.py** – Finds the $K$-best allocations using SOC.  
+- **kBestSequencingByMakespan.py** – Finds the $K$-best **makespan** allocations using MILP.
+- **kBestSequencingBySoc.py** – Finds the $K$-best **SOC** allocations using MILP.  
 
 ---
 
