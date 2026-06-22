@@ -29,7 +29,7 @@ This repository includes full source code, benchmark data, and experiment script
 - **Verify.py** – Verifies solution robustness using simulations.
 - **ScalabilityMilpTest.py** – MILP scalability-related experiments/tests.  
 - **TypeOfOptimizeTest.py** – Experiments/tests for different optimization modes.  
-- **createMap.py** – Generates agent and goal locations for maps.
+- **GenerateInstances.py** – Generates agent and goal locations for maps.
 - **kBestSequencingByService.py** – Finds the $K$-best **service-time (SST)** allocations using MILP.  
 - **kBestSequencingByMakespan.py** – Finds the $K$-best **makespan** allocations using MILP.
 - **kBestSequencingBySoc.py** – Finds the $K$-best **SOC** allocations using MILP.  
